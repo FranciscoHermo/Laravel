@@ -8,18 +8,12 @@ Route::get('/', function () {
 });
  
 
-// Route::get('/test', function(){
-    // return "Welcome";
-// });
+Route::get('/contact', function(){
+    // return redirect('/contact2', 303);
+    return redirect() -> route('contact2');
+    // return view('contact', ['nombre' => 'Javier']);
+}) -> name('contact');
 
-Route::get('/test', function(){
-    return View('test');
-});
-
-Route::get('/crud', function(){
-
-    $age = 21;
-    $data = ['name' => 'Javier', 'age' => $age];
-
-    return View('crud/index' ,$data);
-});
+Route::get('/contact2', function(){
+    return view('contact2');
+}) -> name('contact2');
