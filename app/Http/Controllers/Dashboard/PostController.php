@@ -62,7 +62,37 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all(['title']));
+
+        $request->validate([
+            'title' => 'required|min:5|max:500',
+            'slug' => 'required|min:5|max:500',
+            'content' => 'required|min:7',
+            'category_id' => 'required|integer',
+            'description' => 'required|min:7',
+            'posted' => 'required',
+        ]);
+
+        echo 'not';
+
+        Post::create($request->all());
+
+        return to_route('post.index');
+
+
+        // dd($request->all());
+        // Post::create(
+        //     [
+        //         'title' => $request->all()['title'],
+        //         'slug' => $request->all()['slug'],
+        //         'content' => $request->all()['content'],
+        //         'category_id' => $request->all()['category_id'],
+        //         'description' => $request->all()['descuription'],
+        //         'posted' => $request->all()['posted'],
+
+                // 'image' => $request->all()['image'],
+        //     ]
+        // );
+
     }
 
     /**
