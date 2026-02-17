@@ -1,25 +1,37 @@
 @extends('dashboard.master')
 
 @section('content')
+
+    <a href="{{ route('post.create')}}" target="blank">Create</a>
+
     <table>
         <thead>
             <tr>
-                <th>Title</th>
-                <th>Posted</th>
-                <th>Category</th>
+                <td>Title</td>
+                <td>id</td>
+                <td>Posted</td>
+                <td>Category</td>
+                <td>Options</td>
             </tr>
         </thead>
-        <tbody>
+        <tbody>     
             @foreach ($posts as $p)
                 <tr>
                     <td>
                         {{$p->title}}
                     </td>
                     <td>
+                        {{$p->id}}
+                    </td>
+                    <td>
                         {{$p->posted}}
                     </td>
                     <td>
                         {{$p->category->title}}
+                    </td>
+                    <td>
+                        <a href="{{route('post.edit', $p->id)}}">Edit</a>
+                        <a href="{{route('post.show', $p->id)}}">Show</a>
                     </td>
                 </tr>
                 
