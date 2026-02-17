@@ -1,6 +1,9 @@
 @extends('dashboard.master')
 
 @section('content')
+
+    @include('dashboard.fragment._errors-form')
+
     <form action="{{ route('post.store') }}" method="post">
 
         @csrf
@@ -20,19 +23,18 @@
             @foreach ($categories as $title => $id)
                 <option value="{{ $id }}">{{ $title }}</option>
             @endforeach
-
         </select>
 
         <label for="">Description</label>
         <textarea name="description"></textarea>
 
         <label for="">Posted</label>
-        <select name="posted" id=""></select>
+        <select name="posted" id="">
             <option value="not">Not</option>
             <option value="yes">Yes</option>
+        </select>
 
-
-    <button type="submit">Send</button>
+     <button type="submit">Send</button>
 
     </form>
 @endsection
