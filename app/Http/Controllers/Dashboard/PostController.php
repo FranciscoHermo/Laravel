@@ -12,11 +12,14 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+
     public function index()
     {
-        $post = Post::find(1);
-        $category = Category::find(1);
-        dd($category->posts[1]->title);
+
+        // $post = Post::find(1);
+        // $category = Category::find(1);
+        // dd($category->posts[1]->title);
         // $post = Post::find(3)->delete();
 
         // $post -> update(
@@ -48,7 +51,10 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::pluck('id', 'title');
+        // dd($categories);
+
+        return view('dashboard.post.create', compact('categories'));
     }
 
     /**
@@ -56,7 +62,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all(['title']));
     }
 
     /**

@@ -1,5 +1,5 @@
 @extends('master')
 
-@section('contect')
+@section('content')
     <p> {{$post[0]}} </p>
 @endsection
