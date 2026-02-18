@@ -2,38 +2,30 @@
 
 @section('content')
 
-    <a href="{{ route('post.create')}}" target="blank">Create</a>
+    <a href="{{ route('category.create')}}" target="blank">Create</a>
 
     <table>
         <thead>
             <tr>
                 <td>Title</td>
                 <td>id</td>
-                <td>Posted</td>
-                <td>Category</td>
                 <td>Options</td>
             </tr>
         </thead>
         <tbody>     
-            @foreach ($posts as $p)
+            @foreach ($categories as $c)
                 <tr>
                     <td>
-                        {{$p->title}}
+                        {{$c->title}}
                     </td>
                     <td>
-                        {{$p->id}}
-                    </td>
-                    <td>
-                        {{$p->posted}}
-                    </td>
-                    <td>
-                        {{$p->category->title}}
+                        {{$c->id}}
                     </td>
                     <td>
 
-                        <a href="{{route('post.show', $p->id)}}">Show</a>
-                        <a href="{{route('post.edit', $p->id)}}">Edit</a>
-                        <form action="{{route('post.destroy', $p->id)}}" method="post">
+                        <a href="{{route('category.show', $c->id)}}">Show</a>
+                        <a href="{{route('category.edit', $c->id)}}">Edit</a>
+                        <form action="{{route('category.destroy', $c->id)}}" method="post">
                             @method('DELETE')
                             @csrf
                             <button type="submit">Delete</button>
@@ -45,6 +37,6 @@
         </tbody>
     </table>
 
-    {{ $posts->links() }}
+    {{ $categories->links() }}
 
 @endsection
