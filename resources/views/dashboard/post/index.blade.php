@@ -32,6 +32,11 @@
                     <td>
                         <a href="{{route('post.edit', $p->id)}}">Edit</a>
                         <a href="{{route('post.show', $p->id)}}">Show</a>
+                        <form action="{{route('post.destroy', $p->id)}}" method="post">
+                            @method('DELETE')
+                            @csrf
+                            <button type="submit">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 
