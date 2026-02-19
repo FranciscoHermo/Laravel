@@ -1,10 +1,10 @@
-@extends('dashboard.master')
+@extends('dashboard.layout')
 
 @section('content')
 
     <a href="{{ route('category.create')}}" target="blank">Create</a>
 
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <td>Title</td>

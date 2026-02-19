@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* tabla basica*/
+.table {
+    @apply table-auto w-full
+}
+
+.table {
+    @apply table-auto
+}
+
+.table th{
+    @apply px-6 py-2 bg-gray-50 font-medium text-gray-600 uppercase border leading-4 -tracking-wide
+}
+.table tr{
+    @apply border 
+}
+.table td {
+    @apply px-6 py-4 border whitespace-normal
+}
+
+/* ******************************* tabla basica*/
+/* ******************************* form*/
+
+.form-control{
+    @apply block rounded-sm shadow-sm bg-purple-50 w-full
+}
