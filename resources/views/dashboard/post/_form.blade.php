@@ -31,4 +31,4 @@
             <input type="file" name="image">
         @endif
 
-     <button type="submit">Send</button>
+     <button class="btn btn-succes" type="submit">Send</button>

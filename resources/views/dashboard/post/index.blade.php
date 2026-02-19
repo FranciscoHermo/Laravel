@@ -2,16 +2,16 @@
 
 @section('content')
 
-    <a href="{{ route('post.create')}}" target="blank">Create</a>
+    <a class="btn btn-succes my-3" href="{{ route('post.create')}}" target="blank">Create</a>
 
-    <table class="table">
+    <table class="table mb-3">
         <thead>
             <tr>
-                <td>Title</td>
-                <td>id</td>
-                <td>Posted</td>
-                <td>Category</td>
-                <td>Options</td>
+                <th>Title</th>
+                <th>id</th>
+                <th>Posted</th>
+                <th>Category</th>
+                <th>Options</th>
             </tr>
         </thead>
         <tbody>     
@@ -31,12 +31,12 @@
                     </td>
                     <td>
 
-                        <a href="{{route('post.show', $p->id)}}">Show</a>
-                        <a href="{{route('post.edit', $p->id)}}">Edit</a>
+                        <a class="my-2 btn btn-primary" href="{{route('post.show', $p->id)}}">Show</a>
+                        <a class="my-2 btn btn-primary" href="{{route('post.edit', $p->id)}}">Edit</a>
                         <form action="{{route('post.destroy', $p->id)}}" method="post">
                             @method('DELETE')
                             @csrf
-                            <button type="submit">Delete</button>
+                            <button class="my-2 btn btn-danger" type="submit">Delete</button>
                         </form>
                     </td>
                 </tr>
