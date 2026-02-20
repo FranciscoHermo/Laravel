@@ -1,4 +1,5 @@
     {{$slot}}
+    {{$header}}
         <h1>Listado principal de post</h1>
         @foreach ($posts as $p)
             <div class="card card-white mnb-2">
@@ -7,4 +8,8 @@
                 <p>{{$p->description}}</p>
             </div> 
         @endforeach
+
+{{$extra}}
 {{$posts->links()}}
+
+{{$footer}}
