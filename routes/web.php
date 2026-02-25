@@ -5,6 +5,7 @@ use App\Http\Controllers\Dashboard\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\web\BlogController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\View;
 
 Route::get('/', function () {
     return view('welcome');
@@ -33,5 +34,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
+Route::get('/vue/{n1?}/{n2?}',function(){
+    return view('vue');
+});
+
 
 require __DIR__.'/auth.php';
