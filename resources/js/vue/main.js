@@ -1,20 +1,25 @@
 import { createApp } from 'vue'
-import axios from 'axios'
+import '../bootstrap' 
 
-// 1. Oruga
+
+//tialwindcss
+import '../../css/vue.css'
+
+// Oruga UI
 import Oruga from '@oruga-ui/oruga-next'
-// import '@oruga-ui/oruga-next/dist/oruga-full.css'
+// import '@oruga-ui/theme-oruga/dist/oruga.css'
 
-// 2. Material Design Icons
-import "@mdi/font/css/materialdesignicons.min.css" 
+// Material Design Icons
+import '@mdi/font/css/materialdesignicons.min.css'
 
-import App from './app.vue'
+import App from './App.vue'
 import router from './router'
 
-const app = createApp(App).use(Oruga).use(router)
+const app = createApp(App)
 
-// 3. Configuración Global
-app.config.globalProperties.$axios = axios
-window.axios = axios
+app.config.globalProperties.$axios = window.axios
+
+app.use(Oruga)
+app.use(router)
 
 app.mount('#app')
