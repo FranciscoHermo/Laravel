@@ -80,6 +80,20 @@ class PostController extends Controller
         ]);  // ← Retorna el post, no el resultado de update()
     }
 
+    public function upload(Request $request, Post $post)
+    {
+        $data = $request->validated();
+
+             $data['image'] = $filename = time().'.'.$request['image']->extension();
+             $request->image->move(public_path('image/otro'), $filename);
+
+
+             $post->update($data);
+
+             return response()->json($post);
+
+    }
+
     /**
      * Remove the specified resource from storage.
      * DELETE /api/post/{post}

@@ -7,8 +7,8 @@
             </div>
 
             <div class="felx flex-row-reverse gap-2 bg-gray-100 padding">
-                <o-button class="" variant="danger">Cancelar</o-button>
-                <o-button>Aceptar</o-button>
+                <o-button class="" variant="danger"  @click="deletePost()">Eliminar</o-button>
+                <o-button @click="confirmDeleteActive=false" >Cancelar</o-button>
             </div>
 
 
@@ -44,10 +44,10 @@
             </o-table-column>
             
             <o-table-column class="table" field="slug" label="Acciones" v-slot="p">
-                <router-link class="mr-5" :to="{name:'save', params:{slug: p.row.slug}}">
+                <router-link class="bg-blue-300 mr-5" :to="{name:'save', params:{slug: p.row.slug}}">
                     Editar
                 </router-link>
-                <o-button class="bg-red-700 border" iconLeft="delete" :rounded="true" size="small" variant="danger" @click="deletePost(p)">
+                <o-button class="bg-red-700 border" iconLeft="delete" :rounded="true" size="small" variant="danger" @click="deletePostRow=p; confirmDeleteActive=true">
                     Eliminar
                 </o-button>
             </o-table-column>
@@ -80,8 +80,10 @@ export default {
                 total: 0,
                 per_page: 10,
                 current_page: 1,
-                confirmDeleteActive:true,
+
             },
+            confirmDeleteActive: false,
+            deletePostRow: "",
             isLoading: true,
             currentPage: 1,
             centered: true, 
@@ -109,26 +111,18 @@ export default {
                 });
         },
         
-        deletePost(row) {
-            if (confirm('¿Estás seguro de eliminar este post?')) {
-                this.isLoading = true;
-                
-                this.$axios.delete(`/api/post/${row.row.id}`)
-                    .then(() => {
-                        this.posts.data.splice(row.index, 1);
-                        this.posts.total--;
-                        
-                        console.log('Post eliminado exitosamente');
-                    })
-                    .catch((error) => {
-                        console.error("Error al eliminar post:", error);
-                        alert('Error al eliminar el post');
-                    })
-                    .finally(() => {
-                        this.isLoading = false;
-                    });
+        deletePost() {
+            this.confirmDeleteActive=false
+            this.posts.data.splice(this.deletePostRow.index,1);
+            this.$axios.delete("/api/post/" + this.deletePostRow.row.id);
+            this.$oruga.notification.open({
+            message:'Registro eliminado',
+            position:"bottom-right",
+            variant:'danger',
+            duration:4000,
+            closable:true
+        })
             }
-        }
     },
     
     async mounted() {
@@ -141,6 +135,10 @@ export default {
         } finally {
             this.isLoading = false;
         }
+    },
+    async mounted(){
+        this.listPage();
+   
     }
 }
 </script>
