@@ -7,36 +7,22 @@
     <form @submit.prevent="submit">
         <div class="grid grid-cols-2 gap-3">
             <div class="col-span-2">
-                <o-field
-                    label="Titulo"
-                    :variant="errors.title ? 'danger' : 'primary'"
-                    :message="errors.title"
-                >
+                <o-field label="Titulo" :variant="errors.title ? 'danger' : 'primary'" :message="errors.title">
                     <o-input v-model="form.title"></o-input>
                 </o-field>
             </div>
 
-            <o-field
-                :variant="errors.description ? 'danger' : 'primary'"
-                :message="errors.description"
-                label="Descripción"
-            >
+            <o-field :variant="errors.description ? 'danger' : 'primary'" :message="errors.description"
+                label="Descripción">
                 <o-input v-model="form.description" type="textarea"></o-input>
             </o-field>
 
-            <o-field
-                :variant="errors.content ? 'danger' : 'primary'"
-                :message="errors.content"
-                label="Contenido"
-            >
+            <o-field :variant="errors.content ? 'danger' : 'primary'" :message="errors.content" label="Contenido">
                 <o-input v-model="form.content" type="textarea"></o-input>
             </o-field>
 
-            <o-field
-                :variant="errors.category_id ? 'danger' : 'primary'"
-                :message="errors.category_id"
-                label="Categoría"
-            >
+            <o-field :variant="errors.category_id ? 'danger' : 'primary'" :message="errors.category_id"
+                label="Categoría">
                 <o-select v-model="form.category_id" placeholder="Seleccione una categoría">
                     <option v-for="c in categories" :key="c.id" :value="c.id">
                         {{ c.title }}
@@ -44,29 +30,46 @@
                 </o-select>
             </o-field>
 
-            <o-field
-                :variant="errors.posted ? 'danger' : 'primary'"
-                :message="errors.posted"
-                label="Publicado"
-            >
+            <o-field :variant="errors.posted ? 'danger' : 'primary'" :message="errors.posted" label="Publicado">
                 <o-select v-model="form.posted" placeholder="Seleccione un estado">
                     <option value="yes">Si</option>
                     <option value="not">No</option>
                 </o-select>
             </o-field>
 
-            <div class="flex gap-2 items-end">
-                <o-field label="Imagen">
+
+            <div class="flex gap-2 items-end" v-if="post">
+                <o-field :message="fileError" label="Imagen">
                     <o-upload v-model="file">
                         <o-button variant="primary" tag="a">
                             <o-icon icon="upload"></o-icon>
                             <span>Cargar archivo</span>
                         </o-button>
                     </o-upload>
+
                 </o-field>
-                <o-button variant="info" icon-left="upload" @click="upload" :disabled="!file"> 
-                    Subir 
+                <o-button variant="info" icon-left="upload" @click="upload" :disabled="!file">
+                    Subir
                 </o-button>
+            </div>
+
+            <div class="flex gap-2 items-end" v-if="post">
+                <o-field :message="fileError" label="Imagen">
+                    <o-upload v-model="filesDaD">
+                        <o-section multiple drag-drop variant="primary" tag="a">
+                            <o-icon icon="upload"></o-icon>
+                            <span>Drag and Drop para cargar archivos</span>
+                        </o-section>
+                    </o-upload>
+                </o-field>
+
+                <span v-for="(file, index) in dropFiles" :key="index">
+                    {{ file.name }}
+                    <o-button icon-left="times" size="small" native-type="button" @click="deleteDropFile(index)">
+
+                    </o-button>
+                </span>
+
             </div>
         </div>
 
@@ -93,14 +96,26 @@ export default {
                 category_id: "",
                 posted: "",
             },
-            post: null, // Cambiado a null para mejor control
+            post: null,
             file: null,
+            filesDAD: [], // Unificado
+            fileError: null,
         };
     },
+    watch: {
+        // El watcher detecta cuando sueltas archivos en el Drag and Drop
+        filesDAD: {
+            handler(val) {
+                if (val.length > 0) {
+                    const lastFile = val[val.length - 1];
+                    this.uploadDragAndDrop(lastFile);
+                }
+            },
+            deep: true,
+        },
+    },
     async mounted() {
-        // Cargamos categorías siempre, ya sea crear o editar
         await this.getCategory();
-
         if (this.$route.params.slug) {
             await this.getPost();
             this.initPost();
@@ -112,18 +127,12 @@ export default {
         },
         submit() {
             this.cleanErrorsForm();
+            const url = !this.post ? "/api/post" : "/api/post/" + this.post.id;
+            const method = !this.post ? "post" : "patch";
 
-            if (!this.post) {
-                // MODO CREAR
-                this.$axios.post("/api/post", this.form)
-                    .then(() => this.showSuccess())
-                    .catch((error) => this.handleErrors(error));
-            } else {
-                // MODO ACTUALIZAR
-                this.$axios.patch("/api/post/" + this.post.id, this.form)
-                    .then(() => this.showSuccess())
-                    .catch((error) => this.handleErrors(error));
-            }
+            this.$axios[method](url, this.form)
+                .then(() => this.showSuccess())
+                .catch((error) => this.handleErrors(error));
         },
         handleErrors(error) {
             if (error.response && error.response.data) {
@@ -139,34 +148,49 @@ export default {
                 variant: "success",
                 position: "bottom-right",
                 duration: 4000,
-                closable: true,
             });
         },
-        upload() {
-            console.log("Archivo a subir:", this.file);
+        // Subida del botón tradicional
+        async upload() {
+            const formData = new FormData();
+            formData.append("image", this.file);
+            this.sendImage(formData);
+        },
+        // Subida automática del Drag and Drop
+        uploadDragAndDrop(fileToUpload) {
+            const formData = new FormData();
+            formData.append("image", fileToUpload);
+            this.sendImage(formData);
+        },
+        // Función común para enviar imágenes
+        sendImage(formData) {
+            this.$axios.post("/api/post/upload/" + this.post.id, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            })
+            .then((res) => console.log("Subida exitosa", res))
+            .catch((error) => {
+                this.fileError = error.response.data.message || "Error al subir";
+            });
+        },
+        deleteDropFile(index) {
+            this.filesDAD.splice(index, 1);
         },
         async getCategory() {
-            try {
-                const res = await this.$axios.get("/api/category/all");
-                this.categories = res.data;
-            } catch (e) {
-                console.error("Error al cargar categorías", e);
-            }
+            const res = await this.$axios.get("/api/category/all");
+            this.categories = res.data;
         },
         async getPost() {
-            try {
-                const res = await this.$axios.get("/api/post/slug/" + this.$route.params.slug);
-                this.post = res.data;
-            } catch (e) {
-                console.error("Error al cargar el post", e);
-            }
+            const res = await this.$axios.get("/api/post/slug/" + this.$route.params.slug);
+            this.post = res.data;
         },
         initPost() {
-            this.form.title = this.post.title;
-            this.form.description = this.post.description;
-            this.form.content = this.post.content;
-            this.form.category_id = this.post.category_id;
-            this.form.posted = this.post.posted;
+            Object.assign(this.form, {
+                title: this.post.title,
+                description: this.post.description,
+                content: this.post.content,
+                category_id: this.post.category_id,
+                posted: this.post.posted,
+            });
         },
     },
 };

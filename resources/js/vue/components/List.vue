@@ -47,7 +47,7 @@
                 <router-link class="bg-blue-300 mr-5" :to="{name:'save', params:{slug: p.row.slug}}">
                     Editar
                 </router-link>
-                <o-button class="bg-red-700 border" iconLeft="delete" :rounded="true" size="small" variant="danger" @click="deletePostRow=p; confirmDeleteActive=true">
+                <o-button class="bg-red-700 border rounded-xs" iconLeft="delete" :rounded="true" size="small" variant="danger" @click="deletePostRow=p; confirmDeleteActive=true">
                     Eliminar
                 </o-button>
             </o-table-column>

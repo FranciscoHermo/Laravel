@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\PutRequest;
 use App\Http\Requests\Post\StoreRequest;
 use App\Models\Post;
+use Illuminate\Container\Attributes\Storage;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -82,7 +83,11 @@ class PostController extends Controller
 
     public function upload(Request $request, Post $post)
     {
-        $data = $request->validated();
+            $request->validate([
+                'image' => "required|mime:jpg,png,gif|max:10249"
+            ]);
+
+            // Storage::disk("public_upload")->delete("image/otro/".$post->image);
 
              $data['image'] = $filename = time().'.'.$request['image']->extension();
              $request->image->move(public_path('image/otro'), $filename);
